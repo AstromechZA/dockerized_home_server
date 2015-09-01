@@ -33,18 +33,17 @@ RUN     git clone https://github.com/graphite-project/graphite-web.git /src/grap
         python setup.py install
 
 # remote defaults
-RUN     mkdir /opt/graphite/conf/examples
-RUN     mv /opt/graphite/conf/*.example /opt/graphite/conf/examples
+RUN     mkdir /opt/graphite/conf/examples && mv /opt/graphite/conf/*.example /opt/graphite/conf/examples
 
 # add in only the needed files
-RUN     cp /opt/graphite/conf/examples/storage-schemas.conf.example /opt/graphite/conf/storage-schemas.conf
-RUN     cp /opt/graphite/conf/examples/storage-aggregation.conf.example /opt/graphite/conf/storage-aggregation.conf
-RUN     cp /opt/graphite/conf/examples/carbon.conf.example /opt/graphite/conf/carbon.conf
 RUN     cp /opt/graphite/conf/examples/graphite.wsgi.example /opt/graphite/conf/wsgi.py
+ADD     ./config/graphite/storage-schemas.conf /opt/graphite/conf/storage-schemas.conf
+ADD     ./config/graphite/storage-aggregation.conf /opt/graphite/conf/storage-aggregation.conf
+ADD     ./config/graphite/carbon.conf /opt/graphite/conf/carbon.conf
 
 # copy over some config
-ADD     ./config/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
-ADD     ./config/initial_data.json /opt/graphite/webapp/graphite/initial_data.json
+ADD     ./config/graphite/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
+ADD     ./config/graphite/initial_data.json /opt/graphite/webapp/graphite/initial_data.json
 
 # init django admin user and database
 RUN     cd /opt/graphite/webapp/graphite && python manage.py syncdb --noinput
@@ -52,20 +51,25 @@ RUN     cd /opt/graphite/webapp/graphite && python manage.py syncdb --noinput
 RUN     chown -R www-data:www-data /opt/graphite/webapp/ /opt/graphite/storage/
 
 # copy over nginx and uwsgi configs
-ADD     ./config/nginx_default /etc/nginx/sites-available/default
-ADD     ./config/graphite.ini /etc/uwsgi/apps-available/graphite.ini
+ADD     ./config/nginx/nginx_default_site.conf /etc/nginx/sites-available/default
+ADD     ./config/graphite_uwsgi.ini /etc/uwsgi/apps-available/graphite_uwsgi.ini
 
 # enable the sites
 RUN     ln -s /etc/nginx/sites-available/default  /etc/nginx/sites-enabled/default
-RUN     ln -s /etc/uwsgi/apps-available/graphite.ini /etc/uwsgi/apps-enabled/graphite.ini
+RUN     ln -s /etc/uwsgi/apps-available/graphite_uwsgi.ini /etc/uwsgi/apps-enabled/graphite_uwsgi.ini
 
 # add supervisord config
 ADD     ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-ADD     ./config/nginx.conf /etc/nginx/nginx.conf
+ADD     ./config/nginx/nginx.conf /etc/nginx/nginx.conf
 
 # ============================================================================ #
 
 # nginx port
 EXPOSE  80
 
+# carbon-cache port (we want to be able to receive data from other containers)
+EXPOSE 2003
+EXPOSE 2004
+
+# default command
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
