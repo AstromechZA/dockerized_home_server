@@ -6,7 +6,7 @@ RUN     apt-get update
 # install packages
 RUN     apt-get install -y python-cairo python-dev git wget curl python-pip
 RUN     apt-get install -y nginx uwsgi uwsgi-plugin-python python-django-tagging python-twisted
-RUN     apt-get install -y supervisor
+RUN     apt-get install -y supervisor adduser libfontconfig
 RUN     pip install pytz
 RUN     pip install pyparsing
 
@@ -32,6 +32,11 @@ RUN     git clone https://github.com/graphite-project/graphite-web.git /src/grap
         git checkout 0.9.x &&\
         python setup.py install
 
+# install grafana
+RUN     wget https://grafanarel.s3.amazonaws.com/builds/grafana_2.1.3_amd64.deb && dpkg -i grafana_2.1.3_amd64.deb
+RUN     mkdir -p /var/log/grafana /var/lib/grafana && chown grafana:grafana /var/log/grafana /var/lib/grafana
+RUN     touch /var/run/grafana-server.pid && chown grafana:grafana /var/run/grafana-server.pid
+
 # remote defaults
 RUN     mkdir /opt/graphite/conf/examples && mv /opt/graphite/conf/*.example /opt/graphite/conf/examples
 
@@ -51,11 +56,11 @@ RUN     cd /opt/graphite/webapp/graphite && python manage.py syncdb --noinput
 RUN     chown -R www-data:www-data /opt/graphite/webapp/ /opt/graphite/storage/
 
 # copy over nginx and uwsgi configs
-ADD     ./config/nginx/nginx_default_site.conf /etc/nginx/sites-available/default
+ADD     ./config/nginx/nginx_site_graphite.conf /etc/nginx/sites-available/nginx_site_graphite
 ADD     ./config/graphite_uwsgi.ini /etc/uwsgi/apps-available/graphite_uwsgi.ini
 
 # enable the sites
-RUN     ln -s /etc/nginx/sites-available/default  /etc/nginx/sites-enabled/default
+RUN     ln -s /etc/nginx/sites-available/nginx_site_graphite  /etc/nginx/sites-enabled/nginx_site_graphite
 RUN     ln -s /etc/uwsgi/apps-available/graphite_uwsgi.ini /etc/uwsgi/apps-enabled/graphite_uwsgi.ini
 
 # add supervisord config
@@ -64,8 +69,17 @@ ADD     ./config/nginx/nginx.conf /etc/nginx/nginx.conf
 
 # ============================================================================ #
 
+RUN     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN     rm -rf /src/*
+RUN     rm grafana_2.1.3_amd64.deb
+
+# ============================================================================ #
+
 # nginx port
 EXPOSE  80
+
+# grafana port
+EXPOSE 3000
 
 # carbon-cache port (we want to be able to receive data from other containers)
 EXPOSE 2003
