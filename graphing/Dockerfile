@@ -36,6 +36,7 @@ RUN     git clone https://github.com/graphite-project/graphite-web.git /src/grap
 RUN     wget https://grafanarel.s3.amazonaws.com/builds/grafana_2.1.3_amd64.deb && dpkg -i grafana_2.1.3_amd64.deb
 RUN     mkdir -p /var/log/grafana /var/lib/grafana && chown grafana:grafana /var/log/grafana /var/lib/grafana
 RUN     touch /var/run/grafana-server.pid && chown grafana:grafana /var/run/grafana-server.pid
+ADD     ./config/grafana/grafana.ini /etc/grafana/grafana.ini
 
 # remote defaults
 RUN     mkdir /opt/graphite/conf/examples && mv /opt/graphite/conf/*.example /opt/graphite/conf/examples
@@ -67,11 +68,21 @@ RUN     ln -s /etc/uwsgi/apps-available/graphite_uwsgi.ini /etc/uwsgi/apps-enabl
 ADD     ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ADD     ./config/nginx/nginx.conf /etc/nginx/nginx.conf
 
+# time for hacks! need to inject the graphite data source into the grafana database
+RUN     chown -R grafana:grafana /usr/share/grafana
+USER    grafana
+RUN     cd /usr/share/grafana; /usr/sbin/grafana-server --config=/etc/grafana/grafana.ini --pidfile=/var/run/grafana-server.pid 2>&1 >/dev/null & WPID=$!; sleep 5 && kill $WPID; wait $WPID; exit 0
+ADD     ./config/grafana/default_data_source.sql /tmp/default_data_source.sql
+RUN     sqlite3 /usr/share/grafana/data/grafana.db < /tmp/default_data_source.sql
+USER    root
+
 # ============================================================================ #
 
-RUN     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN     rm -rf /src/*
-RUN     rm grafana_2.1.3_amd64.deb
+RUN     apt-get clean &&\
+        rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* &&\
+        rm -rf /src/* &&\
+        rm grafana_2.1.3_amd64.deb &&\
+        rm -rf /var/log/grafana/*
 
 # ============================================================================ #
 
