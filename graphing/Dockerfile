@@ -63,6 +63,7 @@ ADD     ./config/graphite_uwsgi.ini /etc/uwsgi/apps-available/graphite_uwsgi.ini
 # enable the sites
 RUN     ln -s /etc/nginx/sites-available/nginx_site_graphite  /etc/nginx/sites-enabled/nginx_site_graphite
 RUN     ln -s /etc/uwsgi/apps-available/graphite_uwsgi.ini /etc/uwsgi/apps-enabled/graphite_uwsgi.ini
+RUN     mkdir -p /var/log/graphite-web
 
 # add supervisord config
 ADD     ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -82,7 +83,13 @@ RUN     apt-get clean &&\
         rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* &&\
         rm -rf /src/* &&\
         rm grafana_2.1.3_amd64.deb &&\
-        find /var/log -type f -delete
+        rm -rf /var/log*
+
+RUN     mkdir -p /var/log/grafana && chown grafana:grafana /var/log/grafana &&\
+        mkdir -p /var/log/supervisor &&\
+        mkdir -p /var/log/nginx &&\
+        mkdir -p /var/log/uwsgi &&\
+        mkdir -p /var/log/graphite-web && chown www-data:www-data /var/log/graphite-web
 
 # ============================================================================ #
 
@@ -95,6 +102,8 @@ EXPOSE 3000
 # carbon-cache port (we want to be able to receive data from other containers)
 EXPOSE 2003
 EXPOSE 2004
+
+VOLUME /var/log
 
 # default command
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
