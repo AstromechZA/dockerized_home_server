@@ -103,7 +103,7 @@ EXPOSE 3000
 EXPOSE 2003
 EXPOSE 2004
 
-VOLUME /var/log
+VOLUME ["/var/log", "/opt/graphite/storage/whisper"]
 
 # default command
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
