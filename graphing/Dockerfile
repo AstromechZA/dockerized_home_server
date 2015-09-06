@@ -82,7 +82,7 @@ RUN     apt-get clean &&\
         rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* &&\
         rm -rf /src/* &&\
         rm grafana_2.1.3_amd64.deb &&\
-        rm -rf /var/log/grafana/*
+        find /var/log -type f -delete
 
 # ============================================================================ #
 
