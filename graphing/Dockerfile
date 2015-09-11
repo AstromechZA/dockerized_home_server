@@ -103,6 +103,8 @@ EXPOSE 3000
 EXPOSE 2003
 EXPOSE 2004
 
+# expose /var/log as a volume so that containers can read from it
+# expose graphite storage as a volume so that we can easily mount a directory from the host
 VOLUME ["/var/log", "/opt/graphite/storage/whisper"]
 
 # default command
