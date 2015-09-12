@@ -5,10 +5,9 @@ RUN     apt-get update
 
 # install packages
 RUN     apt-get install -y python-cairo python-dev git wget curl python-pip
-RUN     apt-get install -y nginx uwsgi uwsgi-plugin-python python-django-tagging python-twisted
+RUN     apt-get install -y nginx uwsgi uwsgi-plugin-python sqlite3
 RUN     apt-get install -y supervisor adduser libfontconfig
-RUN     pip install pytz
-RUN     pip install pyparsing
+RUN     pip install pytz pyparsing Twisted==11.1.0 Django==1.5 django-tagging==0.3.6
 
 # disable default site
 RUN     rm /etc/nginx/sites-enabled/default
