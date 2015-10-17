@@ -1,6 +1,8 @@
 FROM ubuntu:14.04.1
 MAINTAINER astromechza
 
+ENV WEBUI_PORT 9091
+ENV WEBUI_PASSWORD changeme
 ENV TORRENT_DOWNLOADS /opt/torrents/downloads
 ENV TORRENT_INCOMPLETE /opt/torrents/incomplete
 
@@ -14,17 +16,17 @@ RUN     mkdir -p /home/debian-transmission &&\
         chown -R debian-transmission: /home/debian-transmission
 
 # configure
-ADD     ./config/settings.json /etc/transmission/settings.json
+ADD     ./config-transmission /home/debian-transmission/config-transmission
+ADD     ./config/settings.json /home/debian-transmission/settings.json
 ADD     ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 RUN     mkdir -p $TORRENT_DOWNLOADS &&\
         chown -R debian-transmission: $TORRENT_DOWNLOADS
 RUN     mkdir -p $TORRENT_INCOMPLETE &&\
         chown -R debian-transmission: $TORRENT_INCOMPLETE
-RUN     chown -R debian-transmission: /etc/transmission
 
 EXPOSE  9091
 
 VOLUME  $TORRENT_DOWNLOADS $TORRENT_INCOMPLETE
 
-CMD     ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD     ["sh", "-c", "/home/debian-transmission/config-transmission && exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
