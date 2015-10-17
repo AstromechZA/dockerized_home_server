@@ -21,11 +21,12 @@ RUN     useradd -s /bin/false "$SMB_PUB_USR"
 RUN     (echo "$SMB_PUB_PWD"; echo "$SMB_PUB_PWD" ) | pdbedit -a -u "$SMB_PUB_USR"
 RUN     useradd -s /bin/false "$SMB_PRV_USR"
 RUN     (echo "$SMB_PRV_PWD"; echo "$SMB_PRV_PWD" ) | pdbedit -a -u "$SMB_PRV_USR"
+RUN     smbpasswd -an nobody
 
 # create mount directories
 RUN     mkdir -p $SMB_PUB_PATH &&\
         chown $SMB_PUB_USR:$SMB_PUB_USR $SMB_PUB_PATH &&\
-        chmod 750 $SMB_PUB_PATH
+        chmod 755 $SMB_PUB_PATH
 
 RUN     mkdir -p $SMB_PRV_PATH &&\
         chown $SMB_PRV_USR:$SMB_PRV_USR $SMB_PRV_PATH &&\
