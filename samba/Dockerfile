@@ -1,8 +1,5 @@
-# Shell Example:
-# docker build -t sambashare .
-# docker run -p 137:137/udp -p 138:138/udp -p 139:139 -p 445:445 sambashare
-
 FROM ubuntu:14.04.1
+MAINTAINER astromechza
 
 ENV SMB_PUB_PATH /opt/samba/share/public
 ENV SMB_PUB_USR sambapublic
@@ -40,6 +37,6 @@ ADD     ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 EXPOSE 137/udp 138/udp 139 445
 
 # define volumes
-VOLUME /opt/samba/share/public /opt/samba/share/private
+VOLUME $SMB_PUB_PATH $SMB_PRV_PATH
 
-CMD supervisord
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
