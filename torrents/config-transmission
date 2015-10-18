@@ -29,11 +29,6 @@ if __name__ == '__main__':
     with open(SETTINGS_FILE, 'r') as f:
         current_settings = json.loads(f.read())
 
-    if 'WEBUI_PORT' in os.environ and os.environ['WEBUI_PORT']:
-        portn = int(os.environ['WEBUI_PORT'])
-        log("Setting webui port to {}", portn)
-        current_settings['rpc-port'] = portn
-
     if 'WEBUI_PASSWORD' in os.environ and os.environ['WEBUI_PASSWORD']:
         if os.environ['WEBUI_PASSWORD'] == 'changeme':
             halt("WEBUI_PASSWORD value was 'changeme' it must be changed!\n"

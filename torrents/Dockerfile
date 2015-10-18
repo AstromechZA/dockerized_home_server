@@ -1,7 +1,6 @@
 FROM ubuntu:14.04.1
 MAINTAINER astromechza
 
-ENV WEBUI_PORT 9091
 ENV WEBUI_PASSWORD changeme
 ENV TORRENT_DOWNLOADS /opt/torrents/downloads
 ENV TORRENT_INCOMPLETE /opt/torrents/incomplete
