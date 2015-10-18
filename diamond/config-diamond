@@ -1,0 +1,55 @@
+#!/usr/bin/python2.7
+
+from configobj import ConfigObj
+import os
+import sys
+
+
+def log(message, *args):
+    print "{} : {}".format(__file__, message.format(*args))
+
+def halt(message):
+    log("ERROR {}", message)
+    sys.exit(1)
+
+
+if __name__ == '__main__':
+
+    log("Running config-diamond")
+
+    if not os.path.isdir('/host_proc'):
+        halt("/host_proc is not mounted.\n"
+             "Please relaunch the container with '-v /proc:/host_proc'")
+
+    if 'GRAPHITE_HOST' not in os.environ:
+        halt("Could not find GRAPHITE_HOST envvar.\n"
+             "Please run container with '-e GRAPHITE_HOST=XXXXX'\n"
+             "Where XXXXX is a hostname or @VAR indicating the value can be found in envvar VAR")
+
+    if 'GRAPHITE_PORT' not in os.environ:
+        halt("Could not find GRAPHITE_PORT envvar.\n"
+             "Please run container with '-e GRAPHITE_PORT=XXXXX'\n"
+             "Where XXXXX is a hostname or @VAR indicating the value can be found in envvar VAR")
+
+    log("Loading diamond.conf")
+
+    config = ConfigObj('/etc/diamond/diamond.conf')
+
+    graphite_host = os.environ['GRAPHITE_HOST']
+    if graphite_host[0] == '@':
+        graphite_host = os.environ[graphite_host[1:]]
+
+    graphite_port = os.environ['GRAPHITE_PORT']
+    if graphite_port[0] == '@':
+        graphite_port = os.environ[graphite_port[1:]]
+
+    config['handlers']['GraphiteHandler']['host'] = graphite_host
+    config['handlers']['GraphiteHandler']['port'] = graphite_port
+
+    config.write()
+
+    log("Configured to post metrics to {}:{}",
+        config['handlers']['GraphiteHandler']['host'],
+        config['handlers']['GraphiteHandler']['port'])
+
+    log("Done")
