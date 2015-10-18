@@ -67,14 +67,14 @@ class PingCollector(diamond.collector.Collector):
         for key in self.config.keys():
             if key[:7] == "target_":
                 host = self.config[key]
-                metric_name = host.replace('.', '_')
+                metric_name = key[7:] + '-' + host.replace('.', '_')
 
                 if not os.access(self.config['bin'], os.X_OK):
                     self.log.error("Path %s does not exist or is not executable"
                                    % self.config['bin'])
                     return
 
-                command = [self.config['bin'], '-nq', '-c 1', host]
+                command = [self.config['bin'], '-nq', '-c 1', '-W', '5', host]
 
                 if str_to_bool(self.config['use_sudo']):
                     command.insert(0, self.config['sudo_cmd'])
