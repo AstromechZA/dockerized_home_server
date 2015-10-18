@@ -28,4 +28,4 @@ EXPOSE  9091
 
 VOLUME  $TORRENT_DOWNLOADS $TORRENT_INCOMPLETE
 
-CMD     ["sh", "-c", "/config-transmission && exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
+CMD     ["sh", "-c", "/config-transmission && chown -R debian-transmission: $TORRENT_DOWNLOADS && exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
