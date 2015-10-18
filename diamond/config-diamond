@@ -31,6 +31,10 @@ if __name__ == '__main__':
              "Please run container with '-e GRAPHITE_PORT=XXXXX'\n"
              "Where XXXXX is a hostname or @VAR indicating the value can be found in envvar VAR")
 
+    if 'HOST_HOSTNAME' not in os.environ:
+        halt("Could not find HOST_HOSTNAME envvar.\n"
+             "Please run container with '-e HOST_HOSTNAME=XXXXX'")
+
     log("Loading diamond.conf")
 
     config = ConfigObj('/etc/diamond/diamond.conf')
@@ -45,6 +49,7 @@ if __name__ == '__main__':
 
     config['handlers']['GraphiteHandler']['host'] = graphite_host
     config['handlers']['GraphiteHandler']['port'] = graphite_port
+    config['collectors']['default']['hostname'] = os.environ['HOST_HOSTNAME']
 
     config.write()
 
