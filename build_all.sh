@@ -10,7 +10,8 @@ if [ ! -d ./graphing -o ! -d ./samba -o ! -d ./torrents ]; then
 fi
 
 docker build -t usvr_graphing ./graphing
+docker build -t usvr_diamond ./diamond
 docker build -t usvr_samba ./samba
 docker build -t usvr_torrents ./torrents
 
-echo "DONE"
+echo "done"
