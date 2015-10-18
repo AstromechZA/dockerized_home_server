@@ -91,14 +91,11 @@ RUN     mkdir -p /var/log/grafana && chown grafana:grafana /var/log/grafana &&\
 
 # ============================================================================ #
 
-# nginx port
-EXPOSE  80
-
 # grafana port
 EXPOSE 3000
 
-# carbon-cache ports (we want to be able to receive data from other containers)
-EXPOSE 2003 2004
+# carbon-cache port
+EXPOSE 2003
 
 # expose graphite storage as a volume so that we can easily mount a directory from the host
 VOLUME /opt/graphite/storage/whisper

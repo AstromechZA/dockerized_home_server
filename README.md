@@ -17,7 +17,7 @@ First step is to build and tag all the Docker images.
 
 ## Running 'Samba'
 
-The samba container serves 2 directories: `/opt/samba/share/public` and `/opt/samba/share/private`.
+The samba container serves 2 directories: `/samba_public` and `/samba_private`.
 The public folder is readable by guests and writeable by only the `sambapublic` user. The private
 folder is not readable or browseable and is only accessibly by the `sambaprivate` user. Passwords
 for both users must be set via `-e` environment variables when launching the container.
@@ -32,9 +32,11 @@ option so that your downloads persist. It also requires a password to be set for
 a `-e` environment variable.
 
 
-## Running 'Graphing' and 'Diamond'
+## All together now!
 
 ```
-docker run --rm -p 80:80 -p 3000:3000 --name usvr_g usvr_graphing
-docker run --rm --link usvr_g:usvr_g -v /proc:/host_proc -e GRAPHITE_HOST=@USVR_G_PORT_2003_TCP_ADDR -e GRAPHITE_PORT=@USVR_G_PORT_2003_TCP_PORT -e HOST_HOSTNAME=$(hostname) --name usvr_d usvr_diamond
+docker run --rm -d -p 3000:3000 -v /tmp/whispers:/opt/graphite/storage/whisper --name usvr_g usvr_graphing
+docker run --rm -d --link usvr_g:usvr_g -v /proc:/host_proc -e GRAPHITE_HOST=@USVR_G_PORT_2003_TCP_ADDR -e GRAPHITE_PORT=@USVR_G_PORT_2003_TCP_PORT -e HOST_HOSTNAME=$(hostname) --name usvr_d usvr_diamond
+docker run --rm -d -p 137:137/udp -p 138:138/udp -p 139:139 -p 445:445 -e SMB_PUB_PWD=test -e SMB_PRV_PWD=test -v /tmp/spublic:/samba_public --name usvr_s usvr_samba
+docker run --rm -d -p 9091:9091 -e WEBUI_PASSWORD=test -v /tmp/spublic/downloads:/torrent_downloads --name usvr_t usvr_torrents
 ```

@@ -1,11 +1,11 @@
 FROM ubuntu:14.04.1
 MAINTAINER astromechza
 
-ENV SMB_PUB_PATH /opt/samba/share/public
+ENV SMB_PUB_PATH /samba_public
 ENV SMB_PUB_USR sambapublic
 ENV SMB_PUB_PWD changeme
 
-ENV SMB_PRV_PATH /opt/samba/share/private
+ENV SMB_PRV_PATH /samba_private
 ENV SMB_PRV_USR sambaprivate
 ENV SMB_PRV_PWD changeme
 

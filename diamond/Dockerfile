@@ -17,7 +17,8 @@ RUN     rm -rf /Diamond
 # copy over configuration
 COPY    ./config-diamond /config-diamond
 COPY    ./config/diamond.conf /etc/diamond/diamond.conf
-COPY    ./config/collectors /etc/diamond/collectors
+COPY    ./config/collector_confs /etc/diamond/collectors
+COPY    ./config/collectors /usr/share/diamond/collectors
 ADD     ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # inject host_proc modification

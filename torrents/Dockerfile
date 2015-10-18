@@ -2,8 +2,8 @@ FROM ubuntu:14.04.1
 MAINTAINER astromechza
 
 ENV WEBUI_PASSWORD changeme
-ENV TORRENT_DOWNLOADS /opt/torrents/downloads
-ENV TORRENT_INCOMPLETE /opt/torrents/incomplete
+ENV TORRENT_DOWNLOADS /torrent_downloads
+ENV TORRENT_INCOMPLETE /torrent_incomplete
 
 RUN     apt-get update &&\
         apt-get install -y supervisor software-properties-common
