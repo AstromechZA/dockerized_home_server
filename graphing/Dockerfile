@@ -1,13 +1,11 @@
 FROM ubuntu:14.04.1
 MAINTAINER astromechza
 
-# update repos
-RUN     apt-get update
-
-# install packages
-RUN     apt-get install -y python-cairo python-dev git wget curl python-pip
-RUN     apt-get install -y nginx uwsgi uwsgi-plugin-python sqlite3
-RUN     apt-get install -y supervisor adduser libfontconfig
+# update repos and install packages
+RUN     apt-get update &&\
+        apt-get install -y python-cairo python-dev git wget curl python-pip &&\
+        apt-get install -y nginx uwsgi uwsgi-plugin-python sqlite3 &&\
+        apt-get install -y supervisor adduser libfontconfig
 RUN     pip install pytz pyparsing Twisted==11.1.0 Django==1.5 django-tagging==0.3.6
 
 # disable default site

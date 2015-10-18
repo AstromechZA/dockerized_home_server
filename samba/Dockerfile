@@ -39,4 +39,4 @@ EXPOSE 137/udp 138/udp 139 445
 # define volumes
 VOLUME $SMB_PUB_PATH $SMB_PRV_PATH
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["/usr/bin/python", "/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
