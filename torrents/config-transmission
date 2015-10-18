@@ -3,32 +3,44 @@
 import json
 import os
 import shutil
-import subprocess
+import sys
 import time
 
 
 SETTINGS_DIR = '/home/debian-transmission'
 SETTINGS_FILE = os.path.join(SETTINGS_DIR, 'settings.json')
 
+def log(message, *args):
+    print "{} : {}".format(__file__, message.format(*args))
+
+def halt(message):
+    log("ERROR {}", message)
+    sys.exit(1)
+
 if __name__ == '__main__':
 
-    print __file__, ':', 'injecting port/password config'
+    log('injecting port/password config')
 
     # backup settings file
     new_file_name = SETTINGS_FILE + '.%d' % time.time()
+    log("backing up settings.json to {}", new_file_name)
     shutil.copyfile(SETTINGS_FILE, new_file_name)
 
     with open(SETTINGS_FILE, 'r') as f:
         current_settings = json.loads(f.read())
 
     if 'WEBUI_PORT' in os.environ and os.environ['WEBUI_PORT']:
-        current_settings['rpc-port'] = int(os.environ['WEBUI_PORT'])
+        portn = int(os.environ['WEBUI_PORT'])
+        log("Setting webui port to {}", portn)
+        current_settings['rpc-port'] = portn
 
     if 'WEBUI_PASSWORD' in os.environ and os.environ['WEBUI_PASSWORD']:
-        assert (os.environ['WEBUI_PORT'] != 'changeme')
-        current_settings['rpc-password'] = os.environ['WEBUI_PASSWORD'].strip()
+        if os.environ['WEBUI_PASSWORD'] == 'changeme':
+            halt("WEBUI_PASSWORD value was 'changeme' it must be changed!\n"
+                 "Please specify '-e WEBUI_PASSWORD=xxxxx' when launching the container.")
+        current_settings['rpc-password'] = os.environ['WEBUI_PASSWORD']
 
     with open(SETTINGS_FILE, 'w') as f:
         f.write(json.dumps(current_settings))
 
-    print __file__, ':', 'done'
+    log('done')

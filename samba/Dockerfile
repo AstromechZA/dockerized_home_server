@@ -30,13 +30,14 @@ RUN     mkdir -p $SMB_PRV_PATH &&\
         chmod 750 $SMB_PRV_PATH
 
 # configure
+ADD     ./config-samba /config-samba
 ADD     ./config/smb.conf /etc/samba/smb.conf
 ADD     ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # expose smbd and nmdb ports
-EXPOSE 137/udp 138/udp 139 445
+EXPOSE  137/udp 138/udp 139 445
 
 # define volumes
-VOLUME $SMB_PUB_PATH $SMB_PRV_PATH
+VOLUME  $SMB_PUB_PATH $SMB_PRV_PATH
 
-CMD ["/usr/bin/python", "/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD     ["sh", "-c", "/config-samba && exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]

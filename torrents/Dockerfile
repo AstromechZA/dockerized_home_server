@@ -16,7 +16,7 @@ RUN     mkdir -p /home/debian-transmission &&\
         chown -R debian-transmission: /home/debian-transmission
 
 # configure
-ADD     ./config-transmission /home/debian-transmission/config-transmission
+ADD     ./config-transmission /config-transmission
 ADD     ./config/settings.json /home/debian-transmission/settings.json
 ADD     ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
@@ -29,4 +29,4 @@ EXPOSE  9091
 
 VOLUME  $TORRENT_DOWNLOADS $TORRENT_INCOMPLETE
 
-CMD     ["sh", "-c", "/home/debian-transmission/config-transmission && exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
+CMD     ["sh", "-c", "/config-transmission && exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
