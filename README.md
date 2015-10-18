@@ -32,3 +32,9 @@ option so that your downloads persist. It also requires a password to be set for
 a `-e` environment variable.
 
 
+## Running 'Graphing' and 'Diamond'
+
+```
+docker run --rm -p 80:80 -p 3000:3000 -p 2003:2003 --name usvr_g usvr_graphing
+docker run --rm --link usvr_g:usvr_g -v /proc:/host_proc -e GRAPHITE_HOST=@USVR_G_PORT_2003_TCP_ADDR -e GRAPHITE_PORT=@USVR_G_PORT_2003_TCP_PORT usvr_diamond
+```

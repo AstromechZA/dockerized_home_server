@@ -100,9 +100,8 @@ EXPOSE 3000
 # carbon-cache ports (we want to be able to receive data from other containers)
 EXPOSE 2003 2004
 
-# expose /var/log as a volume so that containers can read from it
 # expose graphite storage as a volume so that we can easily mount a directory from the host
-VOLUME /var/log /opt/graphite/storage/whisper
+VOLUME /opt/graphite/storage/whisper
 
 # default command
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
