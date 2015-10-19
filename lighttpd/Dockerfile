@@ -2,6 +2,6 @@ FROM jprjr/lighttpd
 MAINTAINER astromechza
 
 COPY    ./landing_page /srv/http
-COPY    ./config-httpd /config-httpd
+COPY    ./entrypoint.sh /entrypoint.sh
 
-CMD     ["/config-httpd && exec lighttpd -D -f /etc/lighttpd/lighttpd.conf"]
+ENTRYPOINT  ["/entrypoint.sh"]
