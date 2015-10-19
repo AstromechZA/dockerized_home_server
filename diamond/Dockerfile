@@ -22,6 +22,6 @@ COPY    ./config/collectors /usr/share/diamond/collectors
 ADD     ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # inject host_proc modification
-RUN     find /usr/share/diamond/collectors/ -type f -name "*.py" -print0 | xargs -0 sed -i 's/\/proc/\/host_proc/g'
+RUN     find /usr/share/diamond/collectors/ -type f -name "*.py" -print0 | xargs -0 sed -i 's/\/proc/\/host\/proc/g'
 
 CMD     ["sh", "-c", "/config-diamond && exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]

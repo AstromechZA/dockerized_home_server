@@ -17,9 +17,9 @@ if __name__ == '__main__':
 
     log("Running config-diamond")
 
-    if not os.path.isdir('/host_proc'):
-        halt("/host_proc is not mounted.\n"
-             "Please relaunch the container with '-v /proc:/host_proc'")
+    if not os.path.isdir('/host/proc'):
+        halt("/hos/_proc is not mounted.\n"
+             "Please relaunch the container with '-v /:/host'")
 
     if 'GRAPHITE_HOST' not in os.environ:
         halt("Could not find GRAPHITE_HOST envvar.\n"
