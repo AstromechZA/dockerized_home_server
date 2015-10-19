@@ -6,4 +6,4 @@ if [ "x$SELF_ADDRESS" == "x" ]; then echo "Need to set SELF_ADDRESS to ip addres
 
 sed -i "s/localhost/$SELF_ADDRESS/g" /srv/http/index.html
 
-lighttpd -D -f /etc/lighttpd/lighttpd.conf
+exec lighttpd -D -f /etc/lighttpd/lighttpd.conf
