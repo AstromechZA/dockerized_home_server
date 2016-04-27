@@ -7,7 +7,7 @@ import sys
 import time
 
 
-SETTINGS_DIR = '/home/debian-transmission'
+SETTINGS_DIR = '/etc/transmission-daemon'
 SETTINGS_FILE = os.path.join(SETTINGS_DIR, 'settings.json')
 
 def log(message, *args):

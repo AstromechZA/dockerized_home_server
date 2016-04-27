@@ -22,9 +22,9 @@
     "blocklist-enabled": false,
     "blocklist-url": "http://www.example.com/blocklist",
 
-    "download-dir": "/torrent_downloads",
+    "download-dir": "/t/downloads",
     "incomplete-dir-enabled": true,
-    "incomplete-dir": "/torrent_incomplete",
+    "incomplete-dir": "/t/incomplete",
     "watch-dir-enabled": false,
     "watch-dir": "",
     "preallocation": 1,

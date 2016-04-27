@@ -40,5 +40,10 @@ if __name__ == '__main__':
         halt("SMB_PRV_PWD value was 'changeme' it must be changed!\n"
              "Please specify '-e SMB_PRV_PWD=xxxxx' when launching the container.")
 
+    if 'SMB_PUB_USR' not in os.environ:
+        halt("Could not find SMB_PUB_USR envvar")
+    if 'SMB_PRV_USR' not in os.environ:
+        halt("Could not find SMB_PRV_USR envvar")
+
     change_samba_password('sambapublic', os.environ['SMB_PUB_PWD'])
     change_samba_password('sambaprivate', os.environ['SMB_PRV_PWD'])

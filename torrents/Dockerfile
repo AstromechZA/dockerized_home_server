@@ -1,31 +1,26 @@
-FROM ubuntu:14.04.1
+FROM alpine:3.3
 MAINTAINER astromechza
 
 ENV WEBUI_PASSWORD changeme
 ENV TORRENT_DOWNLOADS /torrent_downloads
 ENV TORRENT_INCOMPLETE /torrent_incomplete
 
-RUN     apt-get update &&\
-        apt-get install -y supervisor software-properties-common
-RUN     add-apt-repository -y ppa:transmissionbt/ppa
-RUN     apt-get update &&\
-        apt-get install -y transmission-cli transmission-common transmission-daemon
+RUN     apk add --update python py-pip transmission-daemon &&\
+        rm -rf /var/cache/apk/*
 
-RUN     mkdir -p /home/debian-transmission &&\
-        chown -R debian-transmission: /home/debian-transmission
+RUN     pip install supervisor
+
+RUN     mkdir -p /t/downloads &&\
+        mkdir -p /t/incomplete &&\
+        mkdir -p /etc/transmission-daemon
 
 # configure
 ADD     ./config-transmission /config-transmission
-ADD     ./config/settings.json /home/debian-transmission/settings.json
+ADD     ./config/settings.json /etc/transmission-daemon/settings.json
 ADD     ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-RUN     mkdir -p $TORRENT_DOWNLOADS &&\
-        chown -R debian-transmission: $TORRENT_DOWNLOADS
-RUN     mkdir -p $TORRENT_INCOMPLETE &&\
-        chown -R debian-transmission: $TORRENT_INCOMPLETE
+VOLUME /t/downloads
+VOLUME /t/incomplete
+EXPOSE 9091 51413/tcp 51413/udp
 
-EXPOSE  9091
-
-VOLUME  $TORRENT_DOWNLOADS $TORRENT_INCOMPLETE
-
-CMD     ["sh", "-c", "/config-transmission && chown -R debian-transmission: $TORRENT_DOWNLOADS && exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
+CMD     ["sh", "-c", "/config-transmission && exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
