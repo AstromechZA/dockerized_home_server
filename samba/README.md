@@ -36,6 +36,17 @@ The most important configuration options are the passwords for the
 `sambaprivate` and `sambapublic` users. These should be changed using
 environment variables passed to the Docker container.
 
+Because the volume is mounted in the container and has differement permission
+bits and possibly different users, we also allow the UID for each user to be
+changed as well.
+
+Things you can change at launch time (see config-samba):
+
+- user names
+- user passwords
+- user uids
+- share names
+
 ```
 $ docker run -d \
         -p 137:137/udp \
