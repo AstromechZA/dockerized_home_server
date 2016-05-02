@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -ex
+
+# init django admin user and database
+cd /opt/graphite/webapp/graphite
+python manage.py syncdb --noinput
