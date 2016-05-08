@@ -1,0 +1,57 @@
+#!/usr/bin/env python
+
+"""
+This script needs to do a list of things:
+
+- establish variables
+- create the required user with specific uid:gid
+- chown/chmod file tree
+
+"""
+
+import os
+import subprocess
+
+LOGIN_USER = os.environ.get('LOGIN_USER', 'public')
+LOGIN_PASSWORD = os.environ.get('LOGIN_PASSWORD', 'changeme')
+LOGIN_USER_UID = os.environ.get('LOGIN_USER_UID', None)
+CHOWN_GID = os.environ.get('CHOWN_GID', None)
+
+# 0 validate args
+if not LOGIN_USER:
+    raise ValueError("LOGIN_USER must have a valid username")
+if LOGIN_USER in ['ftp', 'anonymous']:
+    raise ValueError("%s is a reserved username" % LOGIN_USER)
+if not LOGIN_PASSWORD or LOGIN_PASSWORD == 'changeme':
+    raise ValueError("You must set LOGIN_PASSWORD to a decent password")
+if LOGIN_USER_UID:
+    print "attempting to convet LOGIN_USER_UID to int"
+    LOGIN_USER_UID = int(LOGIN_USER_UID)
+if CHOWN_GID:
+    print "attempting to convet CHOWN_GID to int"
+    CHOWN_GID = int(CHOWN_GID)
+
+# 1 create the user
+print "Creating user %s" % LOGIN_USER
+adduser_args = ["adduser", "-D"]
+if LOGIN_USER_UID is not None:
+    adduser_args += ["-u", str(LOGIN_USER_UID)]
+adduser_args += [LOGIN_USER]
+subprocess.check_call(adduser_args)
+
+# 2 set its password
+print "Setting password for user %s" % LOGIN_USER
+subprocess.check_call('echo "%s:%s" | chpasswd' % (LOGIN_USER, LOGIN_PASSWORD), shell=True)
+
+# 3 now chown
+print "Chowning /fileshare"
+if CHOWN_GID:
+    subprocess.check_call(["chown", "-R", "%s:%s" % (LOGIN_USER, CHOWN_GID), "/fileshare"])
+else:
+    subprocess.check_call(["chown", "-R", LOGIN_USER, "/fileshare"])
+
+# 4 check ./public
+if not os.path.isdir('/fileshare/public'):
+    print "WARNING: Expected /fileshare to contain a 'public' directory for anonymous users :WARNING"
+
+print "Done."
