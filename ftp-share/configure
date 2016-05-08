@@ -25,10 +25,10 @@ if LOGIN_USER in ['ftp', 'anonymous']:
 if not LOGIN_PASSWORD or LOGIN_PASSWORD == 'changeme':
     raise ValueError("You must set LOGIN_PASSWORD to a decent password")
 if LOGIN_USER_UID:
-    print "attempting to convet LOGIN_USER_UID to int"
+    print "attempting to convert LOGIN_USER_UID to int"
     LOGIN_USER_UID = int(LOGIN_USER_UID)
 if CHOWN_GID:
-    print "attempting to convet CHOWN_GID to int"
+    print "attempting to convert CHOWN_GID to int"
     CHOWN_GID = int(CHOWN_GID)
 
 # 1 create the user
