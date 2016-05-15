@@ -1,7 +1,7 @@
 FROM debian:latest
 
 ENV     GRAPHITE_VERSION 0.9.15
-ENV     GRAFANA_VERSION 2.6.0
+ENV     GRAFANA_VERSION 3.0.1
 
 # install packages
 RUN     apt-get update && apt-get install -y \
