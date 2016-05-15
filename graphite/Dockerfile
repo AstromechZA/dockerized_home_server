@@ -58,5 +58,14 @@ ADD     ./bootstrap-graphite /bootstrap-graphite
 RUN     apt-get clean &&\
         rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# graphite web port
+EXPOSE  80
+
+# carbon tcp port
+EXPOSE 2003
+
+# grafana port
+EXPOSE 3000
+
 # default command
-CMD     /bootstrap-graphite && /usr/local/bin/supervisord
+CMD     /bootstrap-graphite && exec /usr/local/bin/supervisord
