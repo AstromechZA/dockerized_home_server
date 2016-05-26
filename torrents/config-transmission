@@ -4,11 +4,23 @@ import json
 import os
 import shutil
 import sys
+import subprocess
 import time
 
 
+SUPERVISORD_CONF = '/etc/supervisor/conf.d/supervisord.conf'
 SETTINGS_DIR = '/etc/transmission-daemon'
 SETTINGS_FILE = os.path.join(SETTINGS_DIR, 'settings.json')
+
+def chmod_dir(directory, user, (dirperm, filperm)):
+    print "Chowning and Chmodding '%s' to '%s'.." % (directory, user)
+    output = subprocess.check_output(['chown', '-R', '%s:%s' % (user, user), directory])
+    for root, dirnames, filenames in os.walk(directory):
+        for dn in dirnames:
+            os.chmod(os.path.join(root, dn), dirperm)
+        for fn in filenames:
+            os.chmod(os.path.join(root, fn), filperm)
+    print "Done."
 
 def log(message, *args):
     print "{} : {}".format(__file__, message.format(*args))
@@ -18,6 +30,34 @@ def halt(message):
     sys.exit(1)
 
 if __name__ == '__main__':
+
+    # load up environment variables
+    try:
+        DOWNLOADER_USR = os.environ['DOWNLOADER_USR']
+        DOWNLOADER_UID = os.environ['DOWNLOADER_UID']
+        TORRENT_DOWNLOADS = os.environ['TORRENT_DOWNLOADS']
+        TORRENT_INCOMPLETE = os.environ['TORRENT_INCOMPLETE']
+    except KeyError as e:
+        print >> sys.stderr, "Missing environment variable " + e.message
+        sys.exit(1)
+
+    try:
+        DOWNLOADER_UID = int(DOWNLOADER_UID)
+    except (AssertionError, ValueError) as e:
+        print >> sys.stderr, "Bad environment variable " + e.message
+        sys.exit(1)
+
+    # first the public user and dir
+    print "creating user", DOWNLOADER_USR, DOWNLOADER_UID
+    subprocess.check_call(['adduser', '-D', '-u', str(DOWNLOADER_UID), '-s', '/bin/false', DOWNLOADER_USR])
+
+    # create and chmod dirs
+    if not os.path.exists(TORRENT_DOWNLOADS):
+        os.makedirs(TORRENT_DOWNLOADS)
+    chmod_dir(TORRENT_DOWNLOADS, DOWNLOADER_USR, (0755, 0644))
+    if not os.path.exists(TORRENT_INCOMPLETE):
+        os.makedirs(TORRENT_INCOMPLETE)
+    chmod_dir(TORRENT_INCOMPLETE, DOWNLOADER_USR, (0755, 0644))
 
     log('injecting port/password config')
 
@@ -37,5 +77,13 @@ if __name__ == '__main__':
 
     with open(SETTINGS_FILE, 'w') as f:
         f.write(json.dumps(current_settings))
+
+    log("injecting user into supervisord")
+
+    with open(SUPERVISORD_CONF, 'r') as f:
+        content = f.read()
+    content = content.replace('%injectuser%', DOWNLOADER_USR)
+    with open(SUPERVISORD_CONF, 'w') as f:
+        f.write(content)
 
     log('done')

@@ -1,9 +1,11 @@
 FROM alpine:3.3
 MAINTAINER astromechza
 
-ENV WEBUI_PASSWORD changeme
-ENV TORRENT_DOWNLOADS /torrent_downloads
-ENV TORRENT_INCOMPLETE /torrent_incomplete
+ENV     WEBUI_PASSWORD changeme
+ENV     TORRENT_DOWNLOADS /torrent_downloads
+ENV     TORRENT_INCOMPLETE /torrent_incomplete
+ENV     DOWNLOADER_USR torrentuser
+ENV     DOWNLOADER_UID 1001
 
 RUN     apk add --update python py-pip transmission-daemon &&\
         rm -rf /var/cache/apk/*
@@ -19,8 +21,8 @@ ADD     ./config-transmission /config-transmission
 ADD     ./config/settings.json /etc/transmission-daemon/settings.json
 ADD     ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-VOLUME /t/downloads
-VOLUME /t/incomplete
-EXPOSE 9091 51413/tcp 51413/udp
+VOLUME  /t/downloads
+VOLUME  /t/incomplete
+EXPOSE  9091 51413/tcp 51413/udp
 
 CMD     ["sh", "-c", "/config-transmission && exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
