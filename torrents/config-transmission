@@ -35,8 +35,6 @@ if __name__ == '__main__':
     try:
         DOWNLOADER_USR = os.environ['DOWNLOADER_USR']
         DOWNLOADER_UID = os.environ['DOWNLOADER_UID']
-        TORRENT_DOWNLOADS = os.environ['TORRENT_DOWNLOADS']
-        TORRENT_INCOMPLETE = os.environ['TORRENT_INCOMPLETE']
     except KeyError as e:
         print >> sys.stderr, "Missing environment variable " + e.message
         sys.exit(1)
@@ -52,12 +50,8 @@ if __name__ == '__main__':
     subprocess.check_call(['adduser', '-D', '-u', str(DOWNLOADER_UID), '-s', '/bin/false', DOWNLOADER_USR])
 
     # create and chmod dirs
-    if not os.path.exists(TORRENT_DOWNLOADS):
-        os.makedirs(TORRENT_DOWNLOADS)
-    chmod_dir(TORRENT_DOWNLOADS, DOWNLOADER_USR, (0755, 0644))
-    if not os.path.exists(TORRENT_INCOMPLETE):
-        os.makedirs(TORRENT_INCOMPLETE)
-    chmod_dir(TORRENT_INCOMPLETE, DOWNLOADER_USR, (0755, 0644))
+    chmod_dir('/t/downloads', DOWNLOADER_USR, (0755, 0644))
+    chmod_dir('/t/incomplete', DOWNLOADER_USR, (0755, 0644))
 
     log('injecting port/password config')
 

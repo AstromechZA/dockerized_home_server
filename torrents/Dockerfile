@@ -2,8 +2,6 @@ FROM alpine:3.3
 MAINTAINER astromechza
 
 ENV     WEBUI_PASSWORD changeme
-ENV     TORRENT_DOWNLOADS /torrent_downloads
-ENV     TORRENT_INCOMPLETE /torrent_incomplete
 ENV     DOWNLOADER_USR torrentuser
 ENV     DOWNLOADER_UID 1001
 
