@@ -2,6 +2,10 @@
 
 set -ex
 
+# chown various grafana directories, have to do this now since they may be mounted volumes
+chown grafana:grafana /var/log/grafana /var/lib/grafana
+chown -R grafana:grafana /usr/share/grafana
+
 # init django admin user and database
 cd /opt/graphite/webapp/graphite
 python manage.py syncdb --noinput
