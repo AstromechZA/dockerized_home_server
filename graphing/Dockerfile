@@ -52,7 +52,7 @@ ADD     ./conf/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD     ./conf/supervisord.conf /etc/supervisord.conf
 RUN     mkdir -p /var/log/graphite-web && mkdir -p /var/log/supervisor
 
-ADD     ./bootstrap-graphite /bootstrap-graphite
+ADD     ./bootstrap /bootstrap
 
 # === CLEANUP ==================================================================
 RUN     apt-get clean &&\
@@ -78,4 +78,4 @@ VOLUME /opt/graphite/conf
 
 # === ENTRYPOINT ===============================================================
 # default command
-CMD     /bootstrap-graphite && exec /usr/local/bin/supervisord
+CMD     /bootstrap && exec /usr/local/bin/supervisord
