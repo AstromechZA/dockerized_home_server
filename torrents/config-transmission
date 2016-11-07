@@ -85,4 +85,8 @@ if __name__ == '__main__':
     with open(SUPERVISORD_CONF, 'w') as f:
         f.write(content)
 
+    # local lan routes
+    os.system("ip route add 192.168.1.0/24 via 172.17.0.1")
+    os.system("ip route add 10.0.0.0/24 via 172.17.0.1")
+
     log('done')
