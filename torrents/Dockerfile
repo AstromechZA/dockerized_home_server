@@ -5,10 +5,14 @@ ENV     WEBUI_PASSWORD changeme
 ENV     DOWNLOADER_USR torrentuser
 ENV     DOWNLOADER_UID 1001
 
-RUN     apk add --update python py-pip transmission-daemon &&\
+RUN     apk add --update python py-pip transmission-daemon iptables openvpn &&\
         rm -rf /var/cache/apk/*
 
 RUN     pip install supervisor
+
+# nordvpn
+RUN     mkdir nordvpn
+RUN     cd nordvpn && wget https://nordvpn.com/api/files/zip -O nord.zip && unzip nord.zip && rm -rfv nord.zip
 
 RUN     mkdir -p /t/downloads &&\
         mkdir -p /t/incomplete &&\
