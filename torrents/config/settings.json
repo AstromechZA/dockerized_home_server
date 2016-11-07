@@ -41,8 +41,8 @@
     "pex-enabled": true,
     "prefetch-enabled": 1,
     "scrape-paused-torrents-enabled": true,
-    "script-torrent-done-enabled": false,
-    "script-torrent-done-filename": "",
+    "script-torrent-done-enabled": true,
+    "script-torrent-done-filename": "/torrent-finished.sh",
     "utp-enabled": true,
 
     "bind-address-ipv4": "0.0.0.0",
@@ -66,7 +66,7 @@
     "seed-queue-size": 1,
 
     "rpc-enabled": true,
-    "rpc-authentication-required": true,
+    "rpc-authentication-required": false,
     "rpc-bind-address": "0.0.0.0",
     "rpc-port": 9091,
     "rpc-url": "/transmission/",

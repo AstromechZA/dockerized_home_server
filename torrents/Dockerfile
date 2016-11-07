@@ -18,6 +18,7 @@ RUN     mkdir -p /t/downloads &&\
 ADD     ./config-transmission /config-transmission
 ADD     ./config/settings.json /etc/transmission-daemon/settings.json
 ADD     ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ADD     ./scripts/torrent-finished.sh /torrent-finished.sh
 
 VOLUME  /t/downloads
 VOLUME  /t/incomplete

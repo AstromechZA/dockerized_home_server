@@ -9,8 +9,6 @@ import time
 
 
 SUPERVISORD_CONF = '/etc/supervisor/conf.d/supervisord.conf'
-SETTINGS_DIR = '/etc/transmission-daemon'
-SETTINGS_FILE = os.path.join(SETTINGS_DIR, 'settings.json')
 
 def chmod_dir(directory, user, (dirperm, filperm)):
     print "Chowning and Chmodding '%s' to '%s'.." % (directory, user)
@@ -50,29 +48,12 @@ if __name__ == '__main__':
     subprocess.check_call(['adduser', '-D', '-u', str(DOWNLOADER_UID), '-s', '/bin/false', DOWNLOADER_USR])
 
     # create and chmod dirs
+
     chmod_dir('/t/downloads', DOWNLOADER_USR, (0755, 0644))
     chmod_dir('/t/incomplete', DOWNLOADER_USR, (0755, 0644))
+    chmod_dir("/etc/transmission-daemon", DOWNLOADER_USR, (0755, 0644))
 
-    log('injecting port/password config')
-
-    # backup settings file
-    new_file_name = SETTINGS_FILE + '.%d' % time.time()
-    log("backing up settings.json to {}", new_file_name)
-    shutil.copyfile(SETTINGS_FILE, new_file_name)
-
-    with open(SETTINGS_FILE, 'r') as f:
-        current_settings = json.loads(f.read())
-
-    if 'WEBUI_PASSWORD' in os.environ and os.environ['WEBUI_PASSWORD']:
-        if os.environ['WEBUI_PASSWORD'] == 'changeme':
-            halt("WEBUI_PASSWORD value was 'changeme' it must be changed!\n"
-                 "Please specify '-e WEBUI_PASSWORD=xxxxx' when launching the container.")
-        current_settings['rpc-password'] = os.environ['WEBUI_PASSWORD']
-
-    with open(SETTINGS_FILE, 'w') as f:
-        f.write(json.dumps(current_settings))
-
-    log("injecting user into supervisord")
+    log("Injecting user into supervisord config")
 
     with open(SUPERVISORD_CONF, 'r') as f:
         content = f.read()
