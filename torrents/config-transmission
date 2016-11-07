@@ -38,11 +38,7 @@ if __name__ == '__main__':
     try:
         DOWNLOADER_USR = os.environ['DOWNLOADER_USR']
         DOWNLOADER_UID = os.environ['DOWNLOADER_UID']
-    except KeyError as e:
-        print >> sys.stderr, "Missing environment variable " + e.message
-        sys.exit(1)
 
-    try:
         VPN_USER, VPN_PASS = os.environ['NORDVPN_CRED'].split('|', 1)
         with open('/vpnauth.dat', 'w') as f:
             f.write("%s\n" % VPN_USER)
@@ -53,14 +49,13 @@ if __name__ == '__main__':
         if NORDVPN_FILE not in vpns:
             print >> sys.stderr, "Vpn file '%s' is not one of the allowed values. Pick from %s" % (
                 NORDVPN_FILE,
-                ', '.join(vpns)
+                ', '.join(sorted(vpns))
             )
             sys.exit(1)
 
     except KeyError as e:
         print >> sys.stderr, "Missing environment variable " + e.message
         sys.exit(1)
-
 
     try:
         DOWNLOADER_UID = int(DOWNLOADER_UID)
