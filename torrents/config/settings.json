@@ -30,7 +30,7 @@
     "preallocation": 1,
     "rename-partial-files": true,
     "trash-original-torrent-files": false,
-    "umask": 18,
+    "umask": 2,
     "start-added-torrents": true,
 
     "cache-size-mb": 4,
