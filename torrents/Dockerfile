@@ -9,6 +9,7 @@ RUN     apk add --update python py-pip transmission-daemon iptables openvpn &&\
         rm -rf /var/cache/apk/*
 
 RUN     pip install supervisor
+RUN     mkdir /var/log/supervisor
 
 # nordvpn
 RUN     mkdir nordvpn
