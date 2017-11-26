@@ -2,15 +2,17 @@
 
 This docker setup contains 4 docker containers to be run on the host:
 
-- samba : A Samba file share for serving a public and a private folder.
-- torrents : Transmission torrent client.
+- ftp-share : A vsftp server for serving file share directories
 - graphing : Carbon, Graphite, and Grafana for storing and displaying metrics.
-- diamond : A Diamond installation for recording metrics about the host and the containers being run.
+- torrents : Transmission torrent client.
 
 ## All together now!
 
-Use the scripts `build_all.sh`, `launch_all.sh`, `stop_all.sh`, and `remove_all.sh` to manage
-the lifecycle and linking of the containers. These scripts should really be combined into
-one and should use a config file to manage shared settings.
+3. Build all containers
 
-For configuration and settings see the variables at the top of `launch_all.sh`.
+Run `./build_all.sh`
+
+2. Add systemd config
+
+Put the containers.supervisord.conf configuration in /etc/supervisord/conf.d and
+then reload systemd to begin them.
